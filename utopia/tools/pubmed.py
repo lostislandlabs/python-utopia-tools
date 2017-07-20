@@ -153,7 +153,7 @@ _attempts = (
 
 
 
-def fetch(pmid):
+def fetchXML(pmid):
     return utopia.tools.eutils.efetch(id=pmid)
 
 def search(title):
@@ -224,3 +224,5 @@ def resolve(pmid):
         return data
 
 
+# Legacy
+fetch = fetchXML

@@ -2,7 +2,7 @@ import utopia.tools.eutils
 
 from lxml import etree
 
-def fetch(pmcid):
+def fetchXML(pmcid):
     return utopia.tools.eutils.efetch(id=pmcid, db='pmc')
 
 def search(title):
@@ -19,3 +19,6 @@ def identify(id, id_type):
         if not pmcid.startswith('PMC'):
             pmcid = 'PMC{}'.format(pmcid)
         return pmcid
+
+# Legacy
+fetch = fetchXML

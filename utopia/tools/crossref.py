@@ -14,29 +14,21 @@ from lxml import etree
 
 api_key = 'API_KEY'
 
-def fetch(doi):
-    url = 'http://dx.doi.org/{0}'.format(doi)
+def url(doi):
+    return 'http://dx.doi.org/{0}'.format(doi)
+
+def fetchXML(doi):
     headers = { 'Accept': 'application/unixref+xml' }
-    request = urllib2.Request(url, None, headers)
+    request = urllib2.Request(url(doi), None, headers)
     return urllib2.urlopen(request, timeout=10).read()
 
-def resolve(doi):
+def parseXML(xml):
     citation = {}
-    identifiers = {'doi': doi}
     links = []
 
-    try:
-        response = fetch(doi)
-    except urllib2.HTTPError as e:
-        if getattr(e, 'code') in (404, 406):
-            return citation
-        else:
-            raise
+    dom = etree.fromstring(xml)
 
-    citation['raw_crossref_unixref'] = response
-    dom = etree.fromstring(response)
-
-    # Find as much metadata as possible from this crossref record
+    doi = dom.findtext('doi_record/crossref/journal/journal_article/doi_data/doi')
 
     # Authors of the article
     persons = dom.findall('doi_record/crossref/journal/journal_article/contributors/person_name[@contributor_role="author"]')
@@ -74,12 +66,23 @@ def resolve(doi):
         value = idelem.text
         identifiers[rename.get(key, key)] = value
 
-    links.append({
-        'url': 'http://dx.doi.org/{0}'.format(doi),
-        'mime': 'text/html',
-        'type': 'article',
-        'title': "Show on publisher's website",
-        })
+    if doi is not None:
+        identifiers['doi': doi]
+        links.append({
+            'url': 'http://dx.doi.org/{0}'.format(doi),
+            'mime': 'text/html',
+            'type': 'article',
+            'title': "Show on publisher's website",
+            })
+    else:
+        url = dom.findtext('doi_record/crossref/journal/journal_article/doi_data/resource')
+        if url is not None:
+            links.append({
+                'url': url,
+                'mime': 'text/html',
+                'type': 'article',
+                'title': "Show on publisher's website",
+                })
 
     pages = u'-'.join((p for p in (citation.get('first_page'), citation.get('last_page')) if p is not None))
     if len(pages) > 0:
@@ -91,6 +94,14 @@ def resolve(doi):
         citation['links'] = links
 
     return citation
+
+
+def resolve(doi):
+    xml = fetchXML(doi)
+    citation = parseXML(xml)
+    citation['raw_crossref_unixref'] = xml
+    return citation
+
 
 def search(title):
     citations = []
@@ -130,7 +141,7 @@ def freeform_search(freeform):
                     if new_key == 'doi':
                        citation["links"]=[{
                            "type": 'article',
-                           "url": 'http://dx.doi.org/{}'.format(citation['identifiers'][new_key]),
+                           "url": url(citation['identifiers'][new_key]),
                            "mime": "text/html",
                            "title": "Show on publisher's website"
                        }]
@@ -176,3 +187,8 @@ def freeform_search(freeform):
             if 'doi' in citation.get('identifiers', {}):
                 return citation
     return None
+
+
+
+# Legacy
+fetch = fetchXML
