@@ -17,10 +17,12 @@ api_key = 'API_KEY'
 def url(doi):
     return 'http://dx.doi.org/{0}'.format(doi)
 
+
 def fetchXML(doi):
     headers = { 'Accept': 'application/unixref+xml' }
     request = urllib2.Request(url(doi), None, headers)
     return urllib2.urlopen(request, timeout=10).read()
+
 
 def parseXML(xml):
     citation = {}
