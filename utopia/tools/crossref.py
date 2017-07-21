@@ -124,6 +124,7 @@ def search(title):
         citations.append(citation)
     return citations
 
+
 def freeform_search(freeform):
     url = 'https://api.crossref.org/reverse'
     request = urllib2.Request(url, headers={
