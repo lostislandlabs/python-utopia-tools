@@ -191,6 +191,5 @@ def freeform_search(freeform):
     return None
 
 
-
 # Legacy
 fetch = fetchXML
