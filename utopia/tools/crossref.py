@@ -14,6 +14,7 @@ from lxml import etree
 
 api_key = 'API_KEY'
 
+
 def url(doi):
     return 'http://dx.doi.org/{0}'.format(doi)
 
