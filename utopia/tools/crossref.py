@@ -25,6 +25,7 @@ def fetchXML(doi):
 def parseXML(xml):
     citation = {}
     links = []
+    identifiers = {}
 
     dom = etree.fromstring(xml)
 
