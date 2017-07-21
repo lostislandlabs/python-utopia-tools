@@ -7,7 +7,6 @@ import json
 import re
 import socket
 import urllib
-
 import urllib2
 from lxml import etree
 
