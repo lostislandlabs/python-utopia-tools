@@ -68,7 +68,7 @@ def parseXML(xml):
         identifiers[rename.get(key, key)] = value
 
     if doi is not None:
-        identifiers['doi': doi]
+        identifiers['doi'] = doi
         links.append({
             'url': 'http://dx.doi.org/{0}'.format(doi),
             'mime': 'text/html',
