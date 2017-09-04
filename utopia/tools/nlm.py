@@ -2312,7 +2312,10 @@ def parse(nlm):
                 def tostring(node):
                     return etree.tostring(node, encoding=unicode)
                 citation['unstructured'] = (html.text or '') + ''.join(map(tostring, html))
-            citation['displayText'] = utopia.citation.format(citation)
+            try:
+                citation['displayText'] = utopia.citation.format(citation)
+            except:
+                pass # Utopia bridge is likely not loaded, so skip the formatting
 
 
         #######################################################################################

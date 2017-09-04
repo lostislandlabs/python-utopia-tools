@@ -1,4 +1,5 @@
-include LICENSE.txt
+include LICENSE.md
+include README.md
 include utopia/tools/__init__.py
 include utopia/tools/arxiv.py
 include utopia/tools/cited.py
